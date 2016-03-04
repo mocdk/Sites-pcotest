@@ -7,7 +7,7 @@
 # Notice that the pco.json conf file is not present during the build phase, but it present during release
 #
 
-build: moveFilesToVersioned downloadSource createWebdir
+build: composer createDirectoryStructure
 
 release: createSettings migrate publishResources
 
@@ -19,28 +19,15 @@ restart: flushCache warmupCache
 #
 
 
+composer:
+	composer install --no-dev
 
-moveFilesToVersioned:
-	mkdir versioned
-	mv * versioned/ 
-	mv .git* versioned/
-	mv versioned/Makefile .
-	mv versioned/pco.yml .
 
-downloadSource:
-	curl -L -o typo3_src.tgz get.typo3.org/6.2.19
-	tar -zxf typo3_src.tgz
-
-createWebdir:
-	mkdir htdocs
-	cd htdocs
-	ln -s ../typo3_src-6.2.19 typo3_src
-	ln -s typo3_src/typo3
-	ln -s typo3_src/index.php
-	mkdir fileadmin
-	mkdir typo3conf
-	mkdir typo3temp
-	mkdir uploads
+createDirectoryStructure:
+	mkdir fileadmin fileadmin/_temp_ fileadmin/user_upload
+	mkdir typo3conf/l10n typo3conf/ext
+	mkdir typo3temp typo3temp/Cache typo3temp/compressor typo3temp/cs typo3temp/GB typo3temp/InstallToolSessions typo3temp/llxml typo3temp/locks typo3temp/pics typo3temp/_processed_ typo3temp/sprites typo3temp/temp
+	mkdir uploads uploads/media uploads/pics uploads/tx_felogin
 
 
 #
@@ -58,8 +45,6 @@ createSettings:
 	php Build/WriteCacheSettingsFromEnvironment.php > Configuration/Caches.yaml
 
 
-composer:
-	composer install --no-dev
 
 flushCache:
 	php flow flow:cache:flush
