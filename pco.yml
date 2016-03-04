@@ -1,0 +1,7 @@
+app:
+  type: "typo3"
+  name: "typo3demo"
+
+deploy_hooks: 
+  - build 
+  - release
